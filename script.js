@@ -64,14 +64,20 @@ function clearDrops() {
     activeDrops.clear();
 }
 
+function clearCelebration() {
+    document.querySelectorAll('.confetti').forEach((piece) => piece.remove());
+}
+
 function showScreen(screenToShow) {
     startScreen.hidden = screenToShow !== startScreen;
     gameplayScreen.hidden = screenToShow !== gameplayScreen;
 }
 
-function resetGame() {
+function resetRoundState() {
+    // Always clear the old round before creating a new timer or spawn interval.
     clearGameTimers();
     clearDrops();
+    clearCelebration();
     score = 0;
     timeRemaining = roundLength;
     isPlaying = false;
@@ -83,9 +89,7 @@ function resetGame() {
     startButton.textContent = 'Start game';
     resultPanel.hidden = true;
     shareMessage.textContent = '';
-    showScreen(startScreen);
     updateDisplay();
-    showFeedback('Press start when you are ready.');
 }
 
 function finishGame(playerWon) {
@@ -183,7 +187,11 @@ function startGame() {
         return;
     }
 
-    resetGame();
+    resetRoundState();
+    beginRound();
+}
+
+function beginRound() {
     isPlaying = true;
     showScreen(gameplayScreen);
     startButton.disabled = true;
@@ -200,6 +208,12 @@ function startGame() {
             finishGame(score >= winningScore);
         }
     }, 1000);
+}
+
+function restartGame() {
+    // Reset and Play Again both use this path for a completely fresh round.
+    resetRoundState();
+    beginRound();
 }
 
 function showConfetti() {
@@ -241,8 +255,8 @@ async function shareScore() {
 }
 
 startButton.addEventListener('click', startGame);
-replayButton.addEventListener('click', startGame);
-resetButton.addEventListener('click', resetGame);
+replayButton.addEventListener('click', restartGame);
+resetButton.addEventListener('click', restartGame);
 shareButton.addEventListener('click', shareScore);
 
 // The start screen is the first view until the player starts a round.
