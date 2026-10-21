@@ -180,6 +180,13 @@ function createDrop() {
     drop.style.left = `${horizontalPosition}%`;
     drop.setAttribute('aria-label', isPolluted ? 'Polluted water drop, avoid' : 'Clean water drop, catch');
     drop.textContent = isPolluted ? '☣' : '💧';
+    // Pointer input responds immediately on touch, mouse, and pen.
+    drop.addEventListener('pointerdown', (event) => {
+        event.preventDefault();
+        catchDrop(drop, isPolluted);
+    });
+    // Keep click support for keyboard activation and guard duplicate pointer/click events
+    // with activeDrops in catchDrop.
     drop.addEventListener('click', () => catchDrop(drop, isPolluted));
     drop.addEventListener('animationend', () => removeDrop(drop), { once: true });
     activeDrops.add(drop);

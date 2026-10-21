@@ -235,7 +235,8 @@ h1 {
     font-size: 2rem;
     touch-action: manipulation;
     user-select: none;
-    animation: fall 3.2s linear forwards;
+    /* Five seconds gives players time to react while keeping the fall smooth. */
+    animation: fall 5s linear forwards;
 }
 
 .drop.polluted {
