@@ -43,7 +43,8 @@ function updateDisplay() {
     }
 }
 
-function setFeedback(message) {
+// Show short messages in the live feedback area for all players.
+function showFeedback(message) {
     feedbackText.textContent = message;
 }
 
@@ -79,7 +80,7 @@ function resetGame() {
     shareMessage.textContent = '';
     showScreen(startScreen);
     updateDisplay();
-    setFeedback('Press start when you are ready.');
+    showFeedback('Press start when you are ready.');
 }
 
 function finishGame(playerWon) {
@@ -92,19 +93,19 @@ function finishGame(playerWon) {
     if (playerWon) {
         resultTitle.textContent = 'You brought clean water closer!';
         resultMessage.textContent = `You scored ${score} points and reached the community goal. Great work!`;
-        setFeedback('Clean water win!');
+        showFeedback('Clean water win!');
         showConfetti();
     } else {
         resultTitle.textContent = 'Time is up!';
         resultMessage.textContent = `You scored ${score} points. Try again to reach ${winningScore}.`;
-        setFeedback('Every drop still counts. Give it another try!');
+        showFeedback('Every drop still counts. Give it another try!');
     }
 
     resultPanel.hidden = false;
 }
 
-function changeScore(points) {
-    // Math.max keeps the score from ever dropping below zero.
+function updateScore(points) {
+    // Change the score in one place and update the visible number immediately.
     score = Math.max(0, score + points);
     updateDisplay();
 
@@ -112,10 +113,10 @@ function changeScore(points) {
         finishGame(true);
     } else if (score >= 15 && !milestones.fifteenPoints) {
         milestones.fifteenPoints = true;
-        setFeedback('Amazing! 15 points - you are almost there!');
+        showFeedback('Amazing! 15 points - you are almost there!');
     } else if (score >= 10 && !milestones.tenPoints) {
         milestones.tenPoints = true;
-        setFeedback('Great job! You reached 10 points!');
+        showFeedback('Great job! You reached 10 points!');
     }
 }
 
@@ -126,14 +127,14 @@ function catchDrop(drop, isPolluted) {
 
     removeDrop(drop);
     if (isPolluted) {
-        changeScore(-2);
-        setFeedback('Polluted drop! -2 points. Keep going!');
+        updateScore(-2);
+        showFeedback('Polluted drop! -2 points. Keep going!');
     } else {
+        // The active drop is removed before scoring, so a second tap cannot score.
         communityScore += 1;
-        changeScore(1);
-        updateDisplay();
-        if (score < 10) {
-            setFeedback('+1 clean water point!');
+        updateScore(1);
+        if (isPlaying) {
+            showFeedback('+1 Water Drop!');
         }
     }
 }
@@ -176,7 +177,7 @@ function startGame() {
     showScreen(gameplayScreen);
     startButton.disabled = true;
     resultPanel.hidden = true;
-    setFeedback('Go! Catch the clean water drops.');
+    showFeedback('Go! Catch the clean water drops.');
     createDrop();
     dropId = setInterval(createDrop, 800);
     timerId = setInterval(() => {
