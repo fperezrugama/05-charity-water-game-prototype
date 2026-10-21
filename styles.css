@@ -1,15 +1,281 @@
-/* Charity: water Brand Colors
+/* charity: water colors: yellow #ffc907, blue #2e9df7, and ink #111. */
+:root {
+    --yellow: #ffc907;
+    --blue: #2e9df7;
+    --dark-blue: #1267a5;
+    --ink: #111111;
+    --paper: #fffdf5;
+    --muted: #5f6870;
+    --red: #d93925;
+}
 
-Primary Colors:
-- Yellow:     #FFC907
-- Blue:       #2E9DF7
+* {
+    box-sizing: border-box;
+}
 
-Secondary Colors:
-- Light Blue: #8BD1CB
-- Green:      #4FCB53
-- Orange:     #FF902A
-- Red:        #F5402C
-- Dark Green: #159A48
-- Pink:       #F16061
+body {
+    margin: 0;
+    color: var(--ink);
+    background: var(--paper);
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.5;
+}
 
-*/
+.site-header,
+.game-shell,
+footer {
+    width: min(94%, 760px);
+    margin: 0 auto;
+}
+
+.site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.25rem 0;
+}
+
+.logo {
+    width: min(220px, 52vw);
+}
+
+.mission,
+.eyebrow,
+.stat-label {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.mission {
+    margin: 0;
+    color: var(--dark-blue);
+    font-size: 0.75rem;
+}
+
+.intro {
+    padding: 2rem 0 1rem;
+    text-align: center;
+}
+
+.eyebrow {
+    margin: 0;
+    color: var(--dark-blue);
+    font-size: 0.75rem;
+}
+
+h1,
+h2 {
+    margin: 0.35rem 0 0.75rem;
+    line-height: 1.1;
+}
+
+h1 {
+    font-size: clamp(2.2rem, 8vw, 4.4rem);
+}
+
+.intro p:last-child {
+    max-width: 540px;
+    margin: 0 auto;
+    color: var(--muted);
+}
+
+.scoreboard {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin: 1rem 0;
+    text-align: center;
+}
+
+.scoreboard > div {
+    padding: 0.8rem 0.4rem;
+    border: 2px solid var(--ink);
+    border-radius: 0.75rem;
+    background: white;
+}
+
+.stat-label {
+    display: block;
+    color: var(--muted);
+    font-size: 0.65rem;
+}
+
+.scoreboard strong {
+    font-size: clamp(1.4rem, 6vw, 2.2rem);
+}
+
+.goal {
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.feedback {
+    min-height: 1.7rem;
+    margin: 0.5rem 0;
+    color: var(--dark-blue);
+    font-weight: 700;
+    text-align: center;
+}
+
+.game-board {
+    position: relative;
+    height: min(58vh, 430px);
+    min-height: 300px;
+    overflow: hidden;
+    border: 4px solid var(--ink);
+    border-radius: 1rem;
+    background: linear-gradient(#dff4ff, #a9e2fb);
+    box-shadow: inset 0 -35px 0 rgba(46, 157, 247, 0.18);
+}
+
+.instructions {
+    position: absolute;
+    z-index: 1;
+    top: 0.5rem;
+    left: 50%;
+    width: 90%;
+    margin: 0;
+    color: var(--dark-blue);
+    font-size: 0.85rem;
+    text-align: center;
+    transform: translateX(-50%);
+}
+
+.drop {
+    position: absolute;
+    z-index: 2;
+    width: 3.5rem;
+    height: 3.5rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    font-size: 2rem;
+    animation: fall 3.2s linear forwards;
+}
+
+.drop:hover,
+.drop:focus-visible {
+    transform: scale(1.12);
+    outline: 3px solid var(--ink);
+    outline-offset: 2px;
+}
+
+.drop.polluted {
+    background: #c7b39d;
+}
+
+@keyframes fall {
+    from { transform: translateY(-4.5rem); }
+    to { transform: translateY(calc(min(58vh, 430px) - 1rem)); }
+}
+
+.actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    margin: 1rem 0;
+}
+
+.button {
+    min-width: 8rem;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--ink);
+    border-radius: 2rem;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.button:focus-visible {
+    outline: 3px solid var(--dark-blue);
+    outline-offset: 3px;
+}
+
+.button-primary {
+    background: var(--yellow);
+}
+
+.button-secondary {
+    background: white;
+}
+
+.button:hover {
+    filter: brightness(0.96);
+}
+
+.result-panel {
+    margin: 1.25rem 0;
+    padding: 1.5rem;
+    border: 3px solid var(--ink);
+    border-radius: 1rem;
+    background: var(--yellow);
+    text-align: center;
+}
+
+.result-panel .button {
+    margin: 0.25rem;
+}
+
+.share-message {
+    min-height: 1.5rem;
+    color: var(--dark-blue);
+    text-align: center;
+}
+
+footer {
+    padding: 1rem 0 2rem;
+    color: var(--muted);
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+footer a {
+    color: var(--dark-blue);
+}
+
+.confetti {
+    position: fixed;
+    z-index: 10;
+    top: -1rem;
+    width: 0.65rem;
+    height: 1rem;
+    pointer-events: none;
+    animation: celebrate 1.8s ease-out forwards;
+}
+
+@keyframes celebrate {
+    to {
+        transform: translateY(105vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .site-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .mission {
+        align-self: flex-end;
+        margin-top: -0.5rem;
+    }
+
+    .scoreboard {
+        gap: 0.35rem;
+    }
+
+    .stat-label {
+        font-size: 0.55rem;
+        letter-spacing: 0.02em;
+    }
+
+    .actions {
+        flex-wrap: wrap;
+    }
+}

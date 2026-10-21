@@ -3,11 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Charity Water Game</title>
+    <meta name="description" content="Catch the Clean Water, a charity: water-inspired game">
+    <title>Catch the Clean Water</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Welcome to the Charity Water Game Prototype</h1>
+    <header class="site-header">
+        <img class="logo" src="img/cw_logo_horizontal.png" alt="charity: water">
+        <p class="mission">Every drop counts.</p>
+    </header>
+
+    <main class="game-shell">
+        <section class="intro" aria-labelledby="game-title">
+            <p class="eyebrow">A 30-second clean water challenge</p>
+            <h1 id="game-title">Catch the Clean Water</h1>
+            <p>Catch blue drops, avoid polluted drops, and help our community reach its clean water goal.</p>
+        </section>
+
+        <section class="scoreboard" aria-label="Game status">
+            <div>
+                <span class="stat-label">Score</span>
+                <strong id="score">0</strong><span class="goal"> / 20</span>
+            </div>
+            <div>
+                <span class="stat-label">Time</span>
+                <strong id="timer">30</strong><span class="goal">s</span>
+            </div>
+            <div>
+                <span class="stat-label">Community goal</span>
+                <strong id="community-score">0</strong><span class="goal"> drops</span>
+            </div>
+        </section>
+
+        <p id="feedback" class="feedback" role="status" aria-live="polite">Press start when you are ready.</p>
+
+        <section id="game-board" class="game-board" aria-label="Game board" aria-describedby="instructions">
+            <p id="instructions" class="instructions">Catch the clean blue drops. Do not click the polluted drops.</p>
+            <div id="drop-layer"></div>
+        </section>
+
+        <div class="actions">
+            <button id="start-button" class="button button-primary" type="button">Start game</button>
+            <button id="reset-button" class="button button-secondary" type="button">Reset</button>
+        </div>
+
+        <section id="result-panel" class="result-panel" aria-live="polite" hidden>
+            <h2 id="result-title">Round complete</h2>
+            <p id="result-message"></p>
+            <button id="replay-button" class="button button-primary" type="button">Play again</button>
+            <button id="share-button" class="button button-secondary" type="button">Share my score</button>
+        </section>
+
+        <p id="share-message" class="share-message" role="status" aria-live="polite"></p>
+    </main>
+
+    <footer>
+        <p>Inspired by <a href="https://www.charitywater.org/" target="_blank" rel="noreferrer">charity: water</a>.</p>
+    </footer>
+
     <script src="script.js"></script>
 </body>
 </html>
