@@ -20,6 +20,7 @@ const shareMessage = document.querySelector('#share-message');
 
 const roundLength = 30;
 const winningScore = 20;
+const maxActiveDrops = 6;
 let score = 0;
 let timeRemaining = roundLength;
 let communityScore = 0;
@@ -30,6 +31,7 @@ let milestones = {
 };
 let timerId;
 let dropId;
+const activeDrops = new Set();
 
 function updateDisplay() {
     scoreText.textContent = score;
@@ -51,7 +53,9 @@ function clearGameTimers() {
 }
 
 function clearDrops() {
+    // Remove every drop and forget it when a round ends or is reset.
     dropLayer.replaceChildren();
+    activeDrops.clear();
 }
 
 function showScreen(screenToShow) {
@@ -116,11 +120,11 @@ function changeScore(points) {
 }
 
 function catchDrop(drop, isPolluted) {
-    if (!isPlaying) {
+    if (!isPlaying || !activeDrops.has(drop)) {
         return;
     }
 
-    drop.remove();
+    removeDrop(drop);
     if (isPolluted) {
         changeScore(-2);
         setFeedback('Polluted drop! -2 points. Keep going!');
@@ -134,21 +138,30 @@ function catchDrop(drop, isPolluted) {
     }
 }
 
+function removeDrop(drop) {
+    // This works for both collected drops and drops that finish their animation.
+    activeDrops.delete(drop);
+    drop.remove();
+}
+
 function createDrop() {
-    if (!isPlaying) {
+    // Do not create more drops when the round is over or the board is full.
+    if (!isPlaying || activeDrops.size >= maxActiveDrops) {
         return;
     }
 
     const isPolluted = Math.random() < 0.25;
     const drop = document.createElement('button');
-    const horizontalPosition = Math.random() * 82 + 5;
+    // Keep the drop's left edge away from the board edges.
+    const horizontalPosition = Math.random() * 76 + 2;
     drop.className = isPolluted ? 'drop polluted' : 'drop';
     drop.type = 'button';
     drop.style.left = `${horizontalPosition}%`;
     drop.setAttribute('aria-label', isPolluted ? 'Polluted drop, avoid' : 'Clean water drop, catch');
     drop.textContent = isPolluted ? '🟤' : '💧';
     drop.addEventListener('click', () => catchDrop(drop, isPolluted));
-    drop.addEventListener('animationend', () => drop.remove());
+    drop.addEventListener('animationend', () => removeDrop(drop), { once: true });
+    activeDrops.add(drop);
     dropLayer.append(drop);
 }
 
