@@ -8,50 +8,73 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header class="site-header">
-        <img class="logo" src="img/cw_logo_horizontal.png" alt="charity: water">
+    <header id="game-header" class="site-header">
+        <a href="https://www.charitywater.org/" target="_blank" rel="noreferrer">
+            <img class="logo" src="img/cw_logo_horizontal.png" alt="charity: water home">
+        </a>
         <p class="mission">Every drop counts.</p>
     </header>
 
     <main class="game-shell">
-        <section class="intro" aria-labelledby="game-title">
+        <section id="start-screen" class="intro" aria-labelledby="game-title">
             <p class="eyebrow">A 30-second clean water challenge</p>
             <h1 id="game-title">Catch the Clean Water</h1>
-            <p>Catch blue drops, avoid polluted drops, and help our community reach its clean water goal.</p>
+            <p id="game-instructions">
+                Catch clean water drops, avoid polluted drops, and help our community reach its clean water goal.
+            </p>
+            <button id="start-button" class="button button-primary" type="button">
+                Start Game
+            </button>
         </section>
 
-        <section class="scoreboard" aria-label="Game status">
-            <div>
-                <span class="stat-label">Score</span>
-                <strong id="score">0</strong><span class="goal"> / 20</span>
-            </div>
-            <div>
-                <span class="stat-label">Time</span>
-                <strong id="timer">30</strong><span class="goal">s</span>
-            </div>
-            <div>
-                <span class="stat-label">Community goal</span>
-                <strong id="community-score">0</strong><span class="goal"> drops</span>
+        <section id="gameplay-screen" aria-labelledby="gameplay-title">
+            <h2 id="gameplay-title">Gameplay</h2>
+
+            <section class="scoreboard" aria-label="Game status">
+                <div>
+                    <span class="stat-label">Score</span>
+                    <strong id="score">0</strong><span class="goal"> / 20</span>
+                </div>
+                <div>
+                    <span class="stat-label">Time remaining</span>
+                    <strong id="timer">30</strong><span class="goal"> seconds</span>
+                </div>
+            </section>
+
+            <p id="feedback" class="feedback" role="status" aria-live="polite">
+                Press Start Game when you are ready.
+            </p>
+
+            <section id="game-board" class="game-board" aria-label="Falling drop area" aria-describedby="instructions">
+                <p id="instructions" class="instructions">
+                    Catch the clean blue drops. Do not click the polluted drops.
+                </p>
+                <div id="drop-layer" aria-live="off"></div>
+            </section>
+
+            <div class="actions">
+                <button id="reset-button" class="button button-secondary" type="button">
+                    Reset Game
+                </button>
             </div>
         </section>
 
-        <p id="feedback" class="feedback" role="status" aria-live="polite">Press start when you are ready.</p>
-
-        <section id="game-board" class="game-board" aria-label="Game board" aria-describedby="instructions">
-            <p id="instructions" class="instructions">Catch the clean blue drops. Do not click the polluted drops.</p>
-            <div id="drop-layer"></div>
-        </section>
-
-        <div class="actions">
-            <button id="start-button" class="button button-primary" type="button">Start game</button>
-            <button id="reset-button" class="button button-secondary" type="button">Reset</button>
-        </div>
-
-        <section id="result-panel" class="result-panel" aria-live="polite" hidden>
+        <section id="result-panel" class="result-panel" aria-labelledby="result-title" aria-live="polite" hidden>
             <h2 id="result-title">Round complete</h2>
-            <p id="result-message"></p>
-            <button id="replay-button" class="button button-primary" type="button">Play again</button>
-            <button id="share-button" class="button button-secondary" type="button">Share my score</button>
+            <p id="result-message">Your final score is:</p>
+            <p>
+                <span class="stat-label">Final score</span>
+                <strong id="final-score">0</strong>
+            </p>
+            <button id="replay-button" class="button button-primary" type="button">
+                Play Again
+            </button>
+            <button id="share-button" class="button button-secondary" type="button">
+                Share Score
+            </button>
+            <a id="support-button" class="button button-secondary" href="https://www.charitywater.org/" target="_blank" rel="noreferrer">
+                Support charity: water
+            </a>
         </section>
 
         <p id="share-message" class="share-message" role="status" aria-live="polite"></p>
