@@ -238,7 +238,9 @@ function showConfetti() {
 }
 
 async function shareScore() {
-    const shareText = `I caught ${score} clean water points in Catch the Clean Water!`;
+    // window.location.href becomes the published game URL when this game is deployed.
+    const gameUrl = window.location.href;
+    const shareText = `I scored ${score} points in Catch the Clean Water! Play here: ${gameUrl}`;
     shareMessage.textContent = '';
 
     try {
@@ -255,6 +257,7 @@ async function shareScore() {
         if (error instanceof DOMException && error.name === 'AbortError') {
             shareMessage.textContent = 'Share canceled.';
         } else {
+            // Keep sharing failures visible without interrupting the game.
             console.error('Sharing failed:', error);
             shareMessage.textContent = 'We could not share your score. Please try again.';
         }

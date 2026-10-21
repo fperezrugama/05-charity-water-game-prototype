@@ -149,6 +149,31 @@ h1 {
     text-align: center;
 }
 
+.community-goal {
+    max-width: 680px;
+    margin: 1.25rem auto;
+    padding: 1rem 1.25rem;
+    border: 2px dashed var(--dark-blue);
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.75);
+    text-align: center;
+}
+
+.community-goal h3 {
+    margin: 0;
+    color: var(--dark-blue);
+}
+
+.community-goal p {
+    margin: 0.35rem auto;
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.community-goal strong {
+    font-size: 1.8rem;
+}
+
 /* The board is large on desktop and clips drops so they cannot escape it. */
 .game-board {
     position: relative;
