@@ -1,12 +1,13 @@
 // Catch the Clean Water uses regular HTML buttons instead of a game library.
 // This keeps the game simple and makes it usable with a keyboard and screen reader.
 
-const gameBoard = document.querySelector('#game-board');
 const dropLayer = document.querySelector('#drop-layer');
 const scoreText = document.querySelector('#score');
 const timerText = document.querySelector('#timer');
 const communityScoreText = document.querySelector('#community-score');
 const feedbackText = document.querySelector('#feedback');
+const startScreen = document.querySelector('#start-screen');
+const gameplayScreen = document.querySelector('#gameplay-screen');
 const startButton = document.querySelector('#start-button');
 const resetButton = document.querySelector('#reset-button');
 const replayButton = document.querySelector('#replay-button');
@@ -14,21 +15,30 @@ const shareButton = document.querySelector('#share-button');
 const resultPanel = document.querySelector('#result-panel');
 const resultTitle = document.querySelector('#result-title');
 const resultMessage = document.querySelector('#result-message');
+const finalScoreText = document.querySelector('#final-score');
 const shareMessage = document.querySelector('#share-message');
 
 const roundLength = 30;
 const winningScore = 20;
 let score = 0;
-let timeLeft = roundLength;
+let timeRemaining = roundLength;
 let communityScore = 0;
-let gameIsRunning = false;
+let isPlaying = false;
+let milestones = {
+    tenPoints: false,
+    fifteenPoints: false
+};
 let timerId;
 let dropId;
 
 function updateDisplay() {
     scoreText.textContent = score;
-    timerText.textContent = timeLeft;
-    communityScoreText.textContent = communityScore;
+    timerText.textContent = timeRemaining;
+
+    // The community counter is optional while this phase uses the simpler layout.
+    if (communityScoreText) {
+        communityScoreText.textContent = communityScore;
+    }
 }
 
 function setFeedback(message) {
@@ -44,16 +54,26 @@ function clearDrops() {
     dropLayer.replaceChildren();
 }
 
+function showScreen(screenToShow) {
+    startScreen.hidden = screenToShow !== startScreen;
+    gameplayScreen.hidden = screenToShow !== gameplayScreen;
+}
+
 function resetGame() {
     clearGameTimers();
     clearDrops();
     score = 0;
-    timeLeft = roundLength;
-    gameIsRunning = false;
+    timeRemaining = roundLength;
+    isPlaying = false;
+    milestones = {
+        tenPoints: false,
+        fifteenPoints: false
+    };
     startButton.disabled = false;
     startButton.textContent = 'Start game';
     resultPanel.hidden = true;
     shareMessage.textContent = '';
+    showScreen(startScreen);
     updateDisplay();
     setFeedback('Press start when you are ready.');
 }
@@ -61,8 +81,9 @@ function resetGame() {
 function finishGame(playerWon) {
     clearGameTimers();
     clearDrops();
-    gameIsRunning = false;
+    isPlaying = false;
     startButton.disabled = false;
+    finalScoreText.textContent = score;
 
     if (playerWon) {
         resultTitle.textContent = 'You brought clean water closer!';
@@ -85,15 +106,17 @@ function changeScore(points) {
 
     if (score >= winningScore) {
         finishGame(true);
-    } else if (score >= 15) {
+    } else if (score >= 15 && !milestones.fifteenPoints) {
+        milestones.fifteenPoints = true;
         setFeedback('Amazing! 15 points - you are almost there!');
-    } else if (score >= 10) {
+    } else if (score >= 10 && !milestones.tenPoints) {
+        milestones.tenPoints = true;
         setFeedback('Great job! You reached 10 points!');
     }
 }
 
 function catchDrop(drop, isPolluted) {
-    if (!gameIsRunning) {
+    if (!isPlaying) {
         return;
     }
 
@@ -112,7 +135,7 @@ function catchDrop(drop, isPolluted) {
 }
 
 function createDrop() {
-    if (!gameIsRunning) {
+    if (!isPlaying) {
         return;
     }
 
@@ -130,17 +153,23 @@ function createDrop() {
 }
 
 function startGame() {
+    // Ignore extra clicks so two rounds cannot run at the same time.
+    if (isPlaying) {
+        return;
+    }
+
     resetGame();
-    gameIsRunning = true;
+    isPlaying = true;
+    showScreen(gameplayScreen);
     startButton.disabled = true;
     resultPanel.hidden = true;
     setFeedback('Go! Catch the clean water drops.');
     createDrop();
     dropId = setInterval(createDrop, 800);
     timerId = setInterval(() => {
-        timeLeft -= 1;
+        timeRemaining -= 1;
         updateDisplay();
-        if (timeLeft <= 0) {
+        if (timeRemaining <= 0) {
             finishGame(score >= winningScore);
         }
     }, 1000);
@@ -189,4 +218,6 @@ replayButton.addEventListener('click', startGame);
 resetButton.addEventListener('click', resetGame);
 shareButton.addEventListener('click', shareScore);
 
+// The start screen is the first view until the player starts a round.
+showScreen(startScreen);
 updateDisplay();
