@@ -197,8 +197,9 @@ h1 {
 }
 
 .drop.polluted {
-    border-color: var(--polluted);
-    background: #c7b39d;
+    border-color: #3b3028;
+    color: var(--white);
+    background: var(--polluted);
 }
 
 .drop:hover {

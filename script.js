@@ -21,6 +21,8 @@ const shareMessage = document.querySelector('#share-message');
 const roundLength = 30;
 const winningScore = 20;
 const maxActiveDrops = 6;
+const pollutedDropChance = 0.2;
+const pollutedDropPenalty = -2;
 let score = 0;
 let timeRemaining = roundLength;
 let communityScore = 0;
@@ -127,8 +129,9 @@ function catchDrop(drop, isPolluted) {
 
     removeDrop(drop);
     if (isPolluted) {
-        updateScore(-2);
-        showFeedback('Polluted drop! -2 points. Keep going!');
+        // The score helper clamps the result, so pollution cannot make it negative.
+        updateScore(pollutedDropPenalty);
+        showFeedback('Polluted Water! -2');
     } else {
         // The active drop is removed before scoring, so a second tap cannot score.
         communityScore += 1;
@@ -151,15 +154,16 @@ function createDrop() {
         return;
     }
 
-    const isPolluted = Math.random() < 0.25;
+    // Polluted drops are obstacles, but they appear less often than clean drops.
+    const isPolluted = Math.random() < pollutedDropChance;
     const drop = document.createElement('button');
     // Keep the drop's left edge away from the board edges.
     const horizontalPosition = Math.random() * 76 + 2;
     drop.className = isPolluted ? 'drop polluted' : 'drop';
     drop.type = 'button';
     drop.style.left = `${horizontalPosition}%`;
-    drop.setAttribute('aria-label', isPolluted ? 'Polluted drop, avoid' : 'Clean water drop, catch');
-    drop.textContent = isPolluted ? '🟤' : '💧';
+    drop.setAttribute('aria-label', isPolluted ? 'Polluted water drop, avoid' : 'Clean water drop, catch');
+    drop.textContent = isPolluted ? '☣' : '💧';
     drop.addEventListener('click', () => catchDrop(drop, isPolluted));
     drop.addEventListener('animationend', () => removeDrop(drop), { once: true });
     activeDrops.add(drop);
