@@ -71,6 +71,7 @@ function clearCelebration() {
 function showScreen(screenToShow) {
     startScreen.hidden = screenToShow !== startScreen;
     gameplayScreen.hidden = screenToShow !== gameplayScreen;
+    resultPanel.hidden = screenToShow !== resultPanel;
 }
 
 function resetRoundState() {
@@ -87,7 +88,6 @@ function resetRoundState() {
     };
     startButton.disabled = false;
     startButton.textContent = 'Start game';
-    resultPanel.hidden = true;
     shareMessage.textContent = '';
     updateDisplay();
 }
@@ -98,6 +98,7 @@ function finishGame(playerWon) {
     isPlaying = false;
     startButton.disabled = false;
     finalScoreText.textContent = score;
+    showScreen(resultPanel);
 
     if (playerWon) {
         resultTitle.textContent = 'You brought clean water closer!';
@@ -110,7 +111,6 @@ function finishGame(playerWon) {
         showFeedback('Every drop still counts. Give it another try!');
     }
 
-    resultPanel.hidden = false;
 }
 
 function updateScore(points) {
@@ -200,7 +200,6 @@ function beginRound() {
     isPlaying = true;
     showScreen(gameplayScreen);
     startButton.disabled = true;
-    resultPanel.hidden = true;
     showFeedback('Go! Catch the clean water drops.');
     createDrop();
     dropId = setInterval(createDrop, 800);

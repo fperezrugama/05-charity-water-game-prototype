@@ -16,6 +16,10 @@
     box-sizing: border-box;
 }
 
+[hidden] {
+    display: none !important;
+}
+
 html {
     overflow-x: hidden;
 }
@@ -417,4 +421,9 @@ footer a {
         transition-duration: 0.01ms;
     }
 
+    /* Keep drops visible and usable without making them move. */
+    .drop {
+        top: 35%;
+        animation: none;
+    }
 }
