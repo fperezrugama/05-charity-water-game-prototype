@@ -39,6 +39,14 @@ footer {
     margin: 0 auto;
 }
 
+.game-shell {
+    padding-bottom: 1rem;
+}
+
+#gameplay-screen {
+    min-width: 0;
+}
+
 .site-header {
     display: flex;
     align-items: center;
@@ -110,11 +118,16 @@ h1 {
 
 /* Keep the score and timer easy to see above the play area. */
 .scoreboard {
+    position: sticky;
+    top: 0;
+    z-index: 4;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1rem;
     max-width: 680px;
     margin: 1rem auto;
+    padding: 0.5rem 0;
+    background: var(--paper);
     text-align: center;
 }
 
@@ -376,7 +389,8 @@ footer a {
     }
 
     .actions,
-    .result-panel .button {
+    .result-panel {
+        display: flex;
         flex-direction: column;
     }
 
