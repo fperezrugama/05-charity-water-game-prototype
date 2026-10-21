@@ -318,6 +318,7 @@ footer a {
     width: 0.65rem;
     height: 1rem;
     pointer-events: none;
+    user-select: none;
     animation: celebrate 1.8s ease-out forwards;
 }
 
@@ -376,4 +377,5 @@ footer a {
         animation-iteration-count: 1;
         transition-duration: 0.01ms;
     }
+
 }

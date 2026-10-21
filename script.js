@@ -126,11 +126,16 @@ function updateScore(points) {
         finishGame(true);
     } else if (score >= 15 && !milestones.fifteenPoints) {
         milestones.fifteenPoints = true;
-        showFeedback('Amazing! 15 points - you are almost there!');
+        showMilestoneFeedback('Amazing! 15 points - you are almost there!');
     } else if (score >= 10 && !milestones.tenPoints) {
         milestones.tenPoints = true;
-        showFeedback('Great job! You reached 10 points!');
+        showMilestoneFeedback('Great job! You reached 10 points!');
     }
+}
+
+function showMilestoneFeedback(message) {
+    // Milestone flags are set before this function is called, so each message appears once per round.
+    showFeedback(message);
 }
 
 function catchDrop(drop, isPolluted) {
@@ -219,9 +224,11 @@ function restartGame() {
 function showConfetti() {
     const colors = ['#ffc907', '#2e9df7', '#4fcb53', '#ff902a', '#f16061'];
 
+    // Confetti is decorative, short-lived, and never captures pointer or keyboard input.
     for (let index = 0; index < 36; index += 1) {
         const piece = document.createElement('span');
         piece.className = 'confetti';
+        piece.setAttribute('aria-hidden', 'true');
         piece.style.left = `${Math.random() * 100}%`;
         piece.style.backgroundColor = colors[index % colors.length];
         piece.style.animationDelay = `${Math.random() * 0.5}s`;
