@@ -51,12 +51,15 @@ function showFeedback(message) {
 }
 
 function clearGameTimers() {
+    // Clearing both intervals prevents duplicate timers in later rounds.
     clearInterval(timerId);
     clearInterval(dropId);
+    timerId = null;
+    dropId = null;
 }
 
 function clearDrops() {
-    // Remove every drop and forget it when a round ends or is reset.
+    // Removing the elements also stops their CSS fall animations.
     dropLayer.replaceChildren();
     activeDrops.clear();
 }
@@ -107,6 +110,10 @@ function finishGame(playerWon) {
 }
 
 function updateScore(points) {
+    if (!isPlaying) {
+        return;
+    }
+
     // Change the score in one place and update the visible number immediately.
     score = Math.max(0, score + points);
     updateDisplay();
@@ -185,9 +192,11 @@ function startGame() {
     createDrop();
     dropId = setInterval(createDrop, 800);
     timerId = setInterval(() => {
-        timeRemaining -= 1;
+        // Clamp the value so the screen never shows a negative time.
+        timeRemaining = Math.max(0, timeRemaining - 1);
         updateDisplay();
         if (timeRemaining <= 0) {
+            // finishGame clears the spawn interval, timer, and falling drops.
             finishGame(score >= winningScore);
         }
     }, 1000);
