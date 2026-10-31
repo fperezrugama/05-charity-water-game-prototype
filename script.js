@@ -79,17 +79,18 @@ function showFeedback(message) {
 }
 
 function updateDifficultyDescription() {
-    currentDifficulty = difficultySettings[selectedDifficulty];
-    if (!isPlaying) {
-        timeRemaining = currentDifficulty.seconds;
-    }
-    updateDisplay();
-    difficultyDescription.textContent = currentDifficulty.description;
+    // Radio changes only preview the pending mode; the active round stays unchanged.
+    difficultyDescription.textContent = difficultySettings[selectedDifficulty].description;
 }
 
 function chooseDifficulty(event) {
     selectedDifficulty = event.target.value;
     updateDifficultyDescription();
+}
+
+function applySelectedDifficulty() {
+    // Commit a new mode only when a new round is about to begin.
+    currentDifficulty = difficultySettings[selectedDifficulty];
 }
 
 function clearGameTimers() {
@@ -249,7 +250,7 @@ function startGame() {
     }
 
     selectedDifficulty = selectedInput.value;
-    updateDifficultyDescription();
+    applySelectedDifficulty();
     resetRoundState();
     beginRound();
 }
@@ -274,6 +275,11 @@ function beginRound() {
 
 function restartGame() {
     // Reset and Play Again both use this path for a completely fresh round.
+    const selectedInput = document.querySelector('input[name="difficulty"]:checked');
+    if (selectedInput) {
+        selectedDifficulty = selectedInput.value;
+        applySelectedDifficulty();
+    }
     resetRoundState();
     beginRound();
 }
