@@ -35,10 +35,14 @@ const backgroundMusic = new Audio(audioSources.music);
 backgroundMusic.loop = true;
 backgroundMusic.volume = 0.22;
 backgroundMusic.preload = 'auto';
+const cleanDropSound = new Audio(audioSources.cleanDrop);
+cleanDropSound.volume = 0.48;
+cleanDropSound.preload = 'auto';
 let soundEnabled = true;
 let audioStarted = false;
 let audioPreferenceAvailable = true;
 const activeSoundEffects = new Set();
+let cleanDropStopTimeout;
 
 // All difficulty-specific values live here so the game uses one set of logic.
 const difficultySettings = {
@@ -121,14 +125,38 @@ function startBackgroundMusic() {
     });
 }
 
+function stopCleanDropSound() {
+    clearTimeout(cleanDropStopTimeout);
+    cleanDropSound.pause();
+    cleanDropSound.currentTime = 0;
+}
+
+function playCleanDropSound() {
+    if (!soundEnabled) {
+        return;
+    }
+
+    // Reuse one player and limit the multi-pop recording to one short pop.
+    stopCleanDropSound();
+    cleanDropSound.play().catch(() => {
+        stopCleanDropSound();
+    });
+    cleanDropStopTimeout = setTimeout(stopCleanDropSound, 300);
+}
+
 function playSoundEffect(source) {
     if (!soundEnabled) {
         return;
     }
 
+    if (source === audioSources.cleanDrop) {
+        playCleanDropSound();
+        return;
+    }
+
     // A separate short effect can respond to quick collections without restarting music.
     const effect = new Audio(source);
-    effect.volume = source === audioSources.cleanDrop ? 0.48 : 0.4;
+    effect.volume = 0.4;
     activeSoundEffects.add(effect);
     effect.addEventListener('ended', () => activeSoundEffects.delete(effect), { once: true });
     effect.play().catch(() => {
@@ -159,6 +187,7 @@ function toggleSound() {
     } else {
         backgroundMusic.pause();
         backgroundMusic.currentTime = 0;
+        stopCleanDropSound();
         activeSoundEffects.forEach((effect) => {
             effect.pause();
             effect.currentTime = 0;
@@ -210,8 +239,19 @@ function clearGameTimers() {
 
 function clearDrops() {
     // Removing the elements also stops their CSS fall animations.
+    stopAllSoundEffects();
     dropLayer.replaceChildren();
     activeDrops.clear();
+}
+
+function stopAllSoundEffects() {
+    // Reset and game over must not leave a collection sound playing afterward.
+    stopCleanDropSound();
+    activeSoundEffects.forEach((effect) => {
+        effect.pause();
+        effect.currentTime = 0;
+    });
+    activeSoundEffects.clear();
 }
 
 function clearCelebration() {
