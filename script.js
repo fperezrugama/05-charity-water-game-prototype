@@ -13,6 +13,8 @@ const gameplayScreen = document.querySelector('#gameplay-screen');
 const startButton = document.querySelector('#start-button');
 const resetButton = document.querySelector('#reset-button');
 const replayButton = document.querySelector('#replay-button');
+const menuButton = document.querySelector('#menu-button');
+const resultsMenuButton = document.querySelector('#results-menu-button');
 const shareButton = document.querySelector('#share-button');
 const resultPanel = document.querySelector('#result-panel');
 const resultTitle = document.querySelector('#result-title');
@@ -283,6 +285,14 @@ function resetRoundState() {
     updateDisplay();
 }
 
+function returnToMenu() {
+    // Stop this round without creating a result screen or changing local community progress.
+    resetRoundState();
+    showFeedback('');
+    updateDifficultyDescription();
+    showScreen(startScreen);
+}
+
 function finishGame(playerWon) {
     clearGameTimers();
     clearDrops();
@@ -481,6 +491,8 @@ async function shareScore() {
 startButton.addEventListener('click', startGame);
 replayButton.addEventListener('click', restartGame);
 resetButton.addEventListener('click', restartGame);
+menuButton.addEventListener('click', returnToMenu);
+resultsMenuButton.addEventListener('click', returnToMenu);
 shareButton.addEventListener('click', shareScore);
 difficultyInputs.forEach((input) => input.addEventListener('change', chooseDifficulty));
 soundToggle.addEventListener('click', toggleSound);

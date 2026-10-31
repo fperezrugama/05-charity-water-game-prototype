@@ -442,6 +442,14 @@ footer a:focus-visible {
 
 #gameplay-screen.is-active .actions {
     margin: 0.2rem 0;
+    flex-wrap: wrap;
+}
+
+#gameplay-screen.is-active .actions .button {
+    min-width: 8rem;
+    min-height: 2.75rem;
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
 }
 
 /* Buttons and support links share the same friendly arcade style. */
