@@ -32,7 +32,12 @@ body {
     background:
         radial-gradient(circle at 10% 15%, rgba(46, 157, 247, 0.14) 0 4rem, transparent 4.1rem),
         var(--paper);
-    font-family: Arial, Helvetica, sans-serif;
+    /*
+     * The supplied project guidance does not name an approved typeface.
+     * Nunito Sans is a friendly, legally available web font substitute.
+     * The fallback stack keeps text readable if the web font is unavailable.
+     */
+    font-family: "Nunito Sans", Arial, Helvetica, sans-serif;
     line-height: 1.5;
 }
 
