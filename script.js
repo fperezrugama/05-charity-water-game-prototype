@@ -5,6 +5,7 @@ const dropLayer = document.querySelector('#drop-layer');
 const scoreText = document.querySelector('#score');
 const targetScoreText = document.querySelector('#target-score');
 const timerText = document.querySelector('#timer');
+const difficultyHud = document.querySelector('#difficulty-hud');
 const communityScoreText = document.querySelector('#community-score');
 const feedbackText = document.querySelector('#feedback');
 const startScreen = document.querySelector('#start-screen');
@@ -17,6 +18,7 @@ const resultPanel = document.querySelector('#result-panel');
 const resultTitle = document.querySelector('#result-title');
 const resultMessage = document.querySelector('#result-message');
 const finalScoreText = document.querySelector('#final-score');
+const resultDifficulty = document.querySelector('#result-difficulty');
 const shareMessage = document.querySelector('#share-message');
 const difficultyInputs = document.querySelectorAll('input[name="difficulty"]');
 const difficultyDescription = document.querySelector('#difficulty-description');
@@ -48,6 +50,7 @@ const difficultySettings = {
 
 let selectedDifficulty = 'medium';
 let currentDifficulty = difficultySettings.medium;
+let currentDifficultyName = 'Medium';
 const maxActiveDrops = 6;
 const pollutedDropPenalty = -2;
 let score = 0;
@@ -66,6 +69,7 @@ function updateDisplay() {
     scoreText.textContent = score;
     targetScoreText.textContent = currentDifficulty.targetScore;
     timerText.textContent = timeRemaining;
+    difficultyHud.textContent = `${currentDifficultyName} | Score: ${score}/${currentDifficulty.targetScore} | Time: ${timeRemaining}s`;
 
     // The community counter is optional while this phase uses the simpler layout.
     if (communityScoreText) {
@@ -91,6 +95,7 @@ function chooseDifficulty(event) {
 function applySelectedDifficulty() {
     // Commit a new mode only when a new round is about to begin.
     currentDifficulty = difficultySettings[selectedDifficulty];
+    currentDifficultyName = selectedDifficulty.charAt(0).toUpperCase() + selectedDifficulty.slice(1);
 }
 
 function clearGameTimers() {
@@ -141,6 +146,7 @@ function finishGame(playerWon) {
     isPlaying = false;
     startButton.disabled = false;
     finalScoreText.textContent = score;
+    resultDifficulty.textContent = `Difficulty: ${currentDifficultyName}`;
     showScreen(resultPanel);
 
     if (playerWon) {

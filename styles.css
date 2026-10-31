@@ -203,6 +203,15 @@ h1 {
     text-align: center;
 }
 
+.difficulty-hud {
+    grid-column: 1 / -1;
+    margin: 0;
+    color: var(--dark-blue);
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-align: center;
+}
+
 .scoreboard > div {
     padding: 1rem;
     border: 3px solid var(--ink);
@@ -398,6 +407,12 @@ footer a:focus-visible {
 .result-panel #final-score {
     display: block;
     font-size: 3rem;
+}
+
+.result-difficulty {
+    margin: 0.25rem 0 1rem;
+    color: var(--dark-blue);
+    font-weight: 700;
 }
 
 .result-panel .button {
