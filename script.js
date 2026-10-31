@@ -262,6 +262,7 @@ function showScreen(screenToShow) {
     startScreen.hidden = screenToShow !== startScreen;
     gameplayScreen.hidden = screenToShow !== gameplayScreen;
     resultPanel.hidden = screenToShow !== resultPanel;
+    gameplayScreen.classList.toggle('is-active', screenToShow === gameplayScreen);
 }
 
 function resetRoundState() {

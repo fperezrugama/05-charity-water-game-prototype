@@ -56,6 +56,42 @@ footer {
     min-width: 0;
 }
 
+#gameplay-screen.is-active {
+    display: grid;
+    grid-template-areas:
+        "title"
+        "hud"
+        "feedback"
+        "board"
+        "actions"
+        "community";
+    row-gap: 0.35rem;
+}
+
+#gameplay-screen.is-active #gameplay-title {
+    grid-area: title;
+}
+
+#gameplay-screen.is-active .scoreboard {
+    grid-area: hud;
+}
+
+#gameplay-screen.is-active .feedback {
+    grid-area: feedback;
+}
+
+#gameplay-screen.is-active .game-board {
+    grid-area: board;
+}
+
+#gameplay-screen.is-active .actions {
+    grid-area: actions;
+}
+
+#gameplay-screen.is-active .community-goal {
+    grid-area: community;
+}
+
 .site-header {
     display: flex;
     align-items: center;
@@ -214,6 +250,12 @@ h1 {
     text-align: center;
 }
 
+#gameplay-screen.is-active .scoreboard {
+    position: static;
+    margin: 0 auto;
+    padding: 0.2rem 0;
+}
+
 .difficulty-hud {
     grid-column: 1 / -1;
     margin: 0;
@@ -254,6 +296,11 @@ h1 {
     text-align: center;
 }
 
+#gameplay-screen.is-active .feedback {
+    margin: 0;
+    min-height: 1.4rem;
+}
+
 .community-goal {
     max-width: 680px;
     margin: 1.25rem auto;
@@ -279,6 +326,27 @@ h1 {
     font-size: 1.8rem;
 }
 
+#gameplay-screen.is-active .community-goal {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.4rem;
+    margin: 0.25rem auto 0;
+    padding: 0.45rem 0.75rem;
+}
+
+#gameplay-screen.is-active .community-goal h3 {
+    font-size: 0.8rem;
+}
+
+#gameplay-screen.is-active .community-goal p {
+    display: none;
+}
+
+#gameplay-screen.is-active .community-goal strong {
+    font-size: 1.2rem;
+}
+
 /* The board is large on desktop and clips drops so they cannot escape it. */
 .game-board {
     position: relative;
@@ -292,6 +360,11 @@ h1 {
         linear-gradient(rgba(255, 255, 255, 0.2), transparent),
         linear-gradient(var(--light-blue), #9ddaf7);
     box-shadow: inset 0 -4rem 0 rgba(46, 157, 247, 0.18);
+}
+
+#gameplay-screen.is-active .game-board {
+    height: clamp(280px, calc(100dvh - 360px), 500px);
+    min-height: 280px;
 }
 
 .instructions {
@@ -365,6 +438,10 @@ footer a:focus-visible {
     justify-content: center;
     gap: 0.75rem;
     margin: 1.25rem 0;
+}
+
+#gameplay-screen.is-active .actions {
+    margin: 0.2rem 0;
 }
 
 /* Buttons and support links share the same friendly arcade style. */
@@ -524,6 +601,11 @@ footer {
     .game-board {
         height: 55vh;
         min-height: 320px;
+    }
+
+    #gameplay-screen.is-active .game-board {
+        height: clamp(260px, calc(100dvh - 350px), 420px);
+        min-height: 260px;
     }
 
     .actions,
