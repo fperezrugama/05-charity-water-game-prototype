@@ -432,8 +432,27 @@ footer {
     text-align: center;
 }
 
-footer a {
+.mission-footer {
+    max-width: 760px;
+    margin-top: 1.5rem;
+    border-top: 2px solid rgba(18, 103, 165, 0.2);
+}
+
+.footer-message {
+    max-width: 680px;
+    margin: 0 auto 0.75rem;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.footer-links a {
     color: var(--dark-blue);
+    font-weight: 700;
     font-weight: 700;
 }
 
