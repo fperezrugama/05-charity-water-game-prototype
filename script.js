@@ -3,6 +3,7 @@
 
 const dropLayer = document.querySelector('#drop-layer');
 const scoreText = document.querySelector('#score');
+const targetScoreText = document.querySelector('#target-score');
 const timerText = document.querySelector('#timer');
 const communityScoreText = document.querySelector('#community-score');
 const feedbackText = document.querySelector('#feedback');
@@ -17,14 +18,40 @@ const resultTitle = document.querySelector('#result-title');
 const resultMessage = document.querySelector('#result-message');
 const finalScoreText = document.querySelector('#final-score');
 const shareMessage = document.querySelector('#share-message');
+const difficultyInputs = document.querySelectorAll('input[name="difficulty"]');
+const difficultyDescription = document.querySelector('#difficulty-description');
 
-const roundLength = 30;
-const winningScore = 20;
+// All difficulty-specific values live here so the game uses one set of logic.
+const difficultySettings = {
+    easy: {
+        seconds: 45,
+        targetScore: 15,
+        fallDuration: 6.5,
+        pollutedChance: 0.15,
+        description: 'Easy: 45 seconds, target 15 points, and fewer polluted drops.'
+    },
+    medium: {
+        seconds: 30,
+        targetScore: 20,
+        fallDuration: 5,
+        pollutedChance: 0.25,
+        description: 'Medium: 30 seconds, target 20 points, and a balanced challenge.'
+    },
+    hard: {
+        seconds: 25,
+        targetScore: 25,
+        fallDuration: 3.5,
+        pollutedChance: 0.35,
+        description: 'Hard: 25 seconds, target 25 points, and more polluted drops.'
+    }
+};
+
+let selectedDifficulty = 'medium';
+let currentDifficulty = difficultySettings.medium;
 const maxActiveDrops = 6;
-const pollutedDropChance = 0.2;
 const pollutedDropPenalty = -2;
 let score = 0;
-let timeRemaining = roundLength;
+let timeRemaining = currentDifficulty.seconds;
 let communityScore = 0;
 let isPlaying = false;
 let milestones = {
@@ -37,6 +64,7 @@ const activeDrops = new Set();
 
 function updateDisplay() {
     scoreText.textContent = score;
+    targetScoreText.textContent = currentDifficulty.targetScore;
     timerText.textContent = timeRemaining;
 
     // The community counter is optional while this phase uses the simpler layout.
@@ -48,6 +76,20 @@ function updateDisplay() {
 // Show short messages in the live feedback area for all players.
 function showFeedback(message) {
     feedbackText.textContent = message;
+}
+
+function updateDifficultyDescription() {
+    currentDifficulty = difficultySettings[selectedDifficulty];
+    if (!isPlaying) {
+        timeRemaining = currentDifficulty.seconds;
+    }
+    updateDisplay();
+    difficultyDescription.textContent = currentDifficulty.description;
+}
+
+function chooseDifficulty(event) {
+    selectedDifficulty = event.target.value;
+    updateDifficultyDescription();
 }
 
 function clearGameTimers() {
@@ -80,7 +122,7 @@ function resetRoundState() {
     clearDrops();
     clearCelebration();
     score = 0;
-    timeRemaining = roundLength;
+    timeRemaining = currentDifficulty.seconds;
     isPlaying = false;
     milestones = {
         tenPoints: false,
@@ -102,12 +144,12 @@ function finishGame(playerWon) {
 
     if (playerWon) {
         resultTitle.textContent = 'You brought clean water closer!';
-        resultMessage.textContent = `You scored ${score} points and reached the community goal. Great work!`;
+        resultMessage.textContent = `You scored ${score} points and reached the ${currentDifficulty.targetScore}-point goal. Great work!`;
         showFeedback('Clean water win!');
         showConfetti();
     } else {
         resultTitle.textContent = 'Time is up!';
-        resultMessage.textContent = `You scored ${score} points. Try again to reach ${winningScore}.`;
+        resultMessage.textContent = `You scored ${score} points. Try again to reach ${currentDifficulty.targetScore}.`;
         showFeedback('Every drop still counts. Give it another try!');
     }
 
@@ -122,7 +164,7 @@ function updateScore(points) {
     score = Math.max(0, score + points);
     updateDisplay();
 
-    if (score >= winningScore) {
+    if (score >= currentDifficulty.targetScore) {
         finishGame(true);
     } else if (score >= 15 && !milestones.fifteenPoints) {
         milestones.fifteenPoints = true;
@@ -171,13 +213,14 @@ function createDrop() {
     }
 
     // Polluted drops are obstacles, but they appear less often than clean drops.
-    const isPolluted = Math.random() < pollutedDropChance;
+    const isPolluted = Math.random() < currentDifficulty.pollutedChance;
     const drop = document.createElement('button');
     // Keep the drop's left edge away from the board edges.
     const horizontalPosition = Math.random() * 76 + 2;
     drop.className = isPolluted ? 'drop polluted' : 'drop';
     drop.type = 'button';
     drop.style.left = `${horizontalPosition}%`;
+    drop.style.animationDuration = `${currentDifficulty.fallDuration}s`;
     drop.setAttribute('aria-label', isPolluted ? 'Polluted water drop, avoid' : 'Clean water drop, catch');
     drop.textContent = isPolluted ? '☣' : '💧';
     // Pointer input responds immediately on touch, mouse, and pen.
@@ -199,6 +242,14 @@ function startGame() {
         return;
     }
 
+    const selectedInput = document.querySelector('input[name="difficulty"]:checked');
+    if (!selectedInput) {
+        showFeedback('Please choose a difficulty before starting.');
+        return;
+    }
+
+    selectedDifficulty = selectedInput.value;
+    updateDifficultyDescription();
     resetRoundState();
     beginRound();
 }
@@ -216,7 +267,7 @@ function beginRound() {
         updateDisplay();
         if (timeRemaining <= 0) {
             // finishGame clears the spawn interval, timer, and falling drops.
-            finishGame(score >= winningScore);
+            finishGame(score >= currentDifficulty.targetScore);
         }
     }, 1000);
 }
@@ -274,7 +325,9 @@ startButton.addEventListener('click', startGame);
 replayButton.addEventListener('click', restartGame);
 resetButton.addEventListener('click', restartGame);
 shareButton.addEventListener('click', shareScore);
+difficultyInputs.forEach((input) => input.addEventListener('change', chooseDifficulty));
 
 // The start screen is the first view until the player starts a round.
+updateDifficultyDescription();
 showScreen(startScreen);
 updateDisplay();

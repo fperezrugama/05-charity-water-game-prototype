@@ -22,6 +22,29 @@
             <p id="game-instructions">
                 Catch clean water drops, avoid polluted drops, and help our community reach its clean water goal.
             </p>
+            <fieldset class="difficulty-selector">
+                <legend>Choose your difficulty</legend>
+                <div class="difficulty-options">
+                    <label class="difficulty-option">
+                        <input type="radio" name="difficulty" value="easy">
+                        <span class="difficulty-name">Easy</span>
+                        <span class="difficulty-description">45 seconds, slower drops, and fewer polluted drops.</span>
+                    </label>
+                    <label class="difficulty-option">
+                        <input type="radio" name="difficulty" value="medium" checked>
+                        <span class="difficulty-name">Medium</span>
+                        <span class="difficulty-description">30 seconds with a balanced challenge.</span>
+                    </label>
+                    <label class="difficulty-option">
+                        <input type="radio" name="difficulty" value="hard">
+                        <span class="difficulty-name">Hard</span>
+                        <span class="difficulty-description">25 seconds, faster drops, and more polluted drops.</span>
+                    </label>
+                </div>
+                <p id="difficulty-description" class="selected-difficulty-description" aria-live="polite">
+                    Medium: 30 seconds, target 20 points, and a balanced challenge.
+                </p>
+            </fieldset>
             <button id="start-button" class="button button-primary" type="button">
                 Start Game
             </button>
@@ -33,7 +56,7 @@
             <section class="scoreboard" aria-label="Game status">
                 <div aria-live="polite" aria-atomic="true">
                     <span class="stat-label">Score</span>
-                    <strong id="score">0</strong><span class="goal"> / 20</span>
+                    <strong id="score">0</strong><span class="goal"> / <span id="target-score">20</span></span>
                 </div>
                 <div aria-live="polite" aria-atomic="true">
                     <span class="stat-label">Time remaining</span>
