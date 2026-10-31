@@ -25,6 +25,7 @@ const shareMessage = document.querySelector('#share-message');
 const soundToggle = document.querySelector('#sound-toggle');
 const difficultyInputs = document.querySelectorAll('input[name="difficulty"]');
 const difficultyDescription = document.querySelector('#difficulty-description');
+const milestoneMessage = document.querySelector('#milestone-message');
 
 // These paths match the audio files verified in the project's assets folder.
 const audioSources = {
@@ -80,13 +81,25 @@ let score = 0;
 let timeRemaining = currentDifficulty.seconds;
 let communityScore = 0;
 let isPlaying = false;
-let milestones = {
-    tenPoints: false,
-    fifteenPoints: false
-};
 let timerId;
 let dropId;
 const activeDrops = new Set();
+const milestoneMessages = [
+    {
+        percentage: 0.25,
+        message: 'Great start! Keep collecting clean water! 💧'
+    },
+    {
+        percentage: 0.5,
+        message: 'Halfway there! Keep it going! 🌊'
+    },
+    {
+        percentage: 0.75,
+        message: 'Almost there! Every drop counts! ⭐'
+    }
+];
+let triggeredMilestones = new Set();
+let milestoneTimeout;
 
 function loadSoundPreference() {
     try {
@@ -215,6 +228,37 @@ function showFeedback(message) {
     feedbackText.textContent = message;
 }
 
+function clearMilestoneMessage() {
+    clearTimeout(milestoneTimeout);
+    milestoneMessage.textContent = '';
+    milestoneMessage.classList.remove('is-visible');
+}
+
+function showMilestoneMessage(message) {
+    clearMilestoneMessage();
+    milestoneMessage.textContent = message;
+    milestoneMessage.classList.add('is-visible');
+    milestoneTimeout = setTimeout(clearMilestoneMessage, 2000);
+}
+
+function checkMilestones() {
+    let displayedMilestone = false;
+
+    milestoneMessages.forEach((milestone, index) => {
+        const threshold = Math.ceil(currentDifficulty.targetScore * milestone.percentage);
+
+        if (score >= threshold && !triggeredMilestones.has(index)) {
+            triggeredMilestones.add(index);
+            if (!displayedMilestone) {
+                showMilestoneMessage(milestone.message);
+                displayedMilestone = true;
+            }
+        }
+    });
+
+    return displayedMilestone;
+}
+
 function updateDifficultyDescription() {
     // Radio changes only preview the pending mode; the active round stays unchanged.
     difficultyDescription.textContent = difficultySettings[selectedDifficulty].description;
@@ -272,13 +316,11 @@ function resetRoundState() {
     clearGameTimers();
     clearDrops();
     clearCelebration();
+    clearMilestoneMessage();
     score = 0;
     timeRemaining = currentDifficulty.seconds;
     isPlaying = false;
-    milestones = {
-        tenPoints: false,
-        fifteenPoints: false
-    };
+    triggeredMilestones = new Set();
     startButton.disabled = false;
     startButton.textContent = 'Start game';
     shareMessage.textContent = '';
@@ -296,6 +338,7 @@ function returnToMenu() {
 function finishGame(playerWon) {
     clearGameTimers();
     clearDrops();
+    clearMilestoneMessage();
     isPlaying = false;
     startButton.disabled = false;
     finalScoreText.textContent = score;
@@ -323,21 +366,13 @@ function updateScore(points) {
     // Change the score in one place and update the visible number immediately.
     score = Math.max(0, score + points);
     updateDisplay();
+    const milestoneDisplayed = checkMilestones();
 
     if (score >= currentDifficulty.targetScore) {
         finishGame(true);
-    } else if (score >= 15 && !milestones.fifteenPoints) {
-        milestones.fifteenPoints = true;
-        showMilestoneFeedback('Amazing! 15 points - you are almost there!');
-    } else if (score >= 10 && !milestones.tenPoints) {
-        milestones.tenPoints = true;
-        showMilestoneFeedback('Great job! You reached 10 points!');
     }
-}
 
-function showMilestoneFeedback(message) {
-    // Milestone flags are set before this function is called, so each message appears once per round.
-    showFeedback(message);
+    return milestoneDisplayed;
 }
 
 function catchDrop(drop, isPolluted) {
@@ -355,8 +390,8 @@ function catchDrop(drop, isPolluted) {
         playSoundEffect(audioSources.cleanDrop);
         // The active drop is removed before scoring, so a second tap cannot score.
         communityScore += 1;
-        updateScore(1);
-        if (isPlaying) {
+        const milestoneDisplayed = updateScore(1);
+        if (isPlaying && !milestoneDisplayed) {
             showFeedback('+1 Water Drop!');
         }
     }

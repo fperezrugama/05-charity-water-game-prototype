@@ -62,6 +62,7 @@ footer {
         "title"
         "hud"
         "feedback"
+        "milestone"
         "board"
         "actions"
         "community";
@@ -78,6 +79,10 @@ footer {
 
 #gameplay-screen.is-active .feedback {
     grid-area: feedback;
+}
+
+#gameplay-screen.is-active .milestone-message {
+    grid-area: milestone;
 }
 
 #gameplay-screen.is-active .game-board {
@@ -299,6 +304,34 @@ h1 {
 #gameplay-screen.is-active .feedback {
     margin: 0;
     min-height: 1.4rem;
+}
+
+.milestone-message {
+    min-height: 0;
+    margin: 0;
+    color: var(--dark-blue);
+    font-weight: 700;
+    opacity: 0;
+    pointer-events: none;
+    text-align: center;
+}
+
+.milestone-message.is-visible {
+    min-height: 1.4rem;
+    animation: milestone-pop 200ms ease-out;
+    opacity: 1;
+}
+
+@keyframes milestone-pop {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 .community-goal {
