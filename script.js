@@ -20,8 +20,25 @@ const resultMessage = document.querySelector('#result-message');
 const finalScoreText = document.querySelector('#final-score');
 const resultDifficulty = document.querySelector('#result-difficulty');
 const shareMessage = document.querySelector('#share-message');
+const soundToggle = document.querySelector('#sound-toggle');
 const difficultyInputs = document.querySelectorAll('input[name="difficulty"]');
 const difficultyDescription = document.querySelector('#difficulty-description');
+
+// These paths match the audio files verified in the project's assets folder.
+const audioSources = {
+    music: 'assets/cartoon_music-menu-screen-_-lobby-music-7-466015.mp3',
+    cleanDrop: 'assets/beetpro-water-drop-pop-sound-effect-28-11509.mp3',
+    pollutedDrop: 'assets/universfield-failure-trumpet-242645.mp3'
+};
+
+const backgroundMusic = new Audio(audioSources.music);
+backgroundMusic.loop = true;
+backgroundMusic.volume = 0.22;
+backgroundMusic.preload = 'auto';
+let soundEnabled = true;
+let audioStarted = false;
+let audioPreferenceAvailable = true;
+const activeSoundEffects = new Set();
 
 // All difficulty-specific values live here so the game uses one set of logic.
 const difficultySettings = {
@@ -64,6 +81,91 @@ let milestones = {
 let timerId;
 let dropId;
 const activeDrops = new Set();
+
+function loadSoundPreference() {
+    try {
+        const savedPreference = localStorage.getItem('catchCleanWaterSound');
+        if (savedPreference !== null) {
+            soundEnabled = savedPreference === 'on';
+        }
+    } catch (error) {
+        audioPreferenceAvailable = false;
+    }
+}
+
+function saveSoundPreference() {
+    if (!audioPreferenceAvailable) {
+        return;
+    }
+
+    try {
+        localStorage.setItem('catchCleanWaterSound', soundEnabled ? 'on' : 'off');
+    } catch (error) {
+        audioPreferenceAvailable = false;
+    }
+}
+
+function updateSoundToggle() {
+    soundToggle.textContent = soundEnabled ? 'Sound On' : 'Sound Off';
+    soundToggle.setAttribute('aria-pressed', String(soundEnabled));
+}
+
+function startBackgroundMusic() {
+    if (!soundEnabled || !audioStarted) {
+        return;
+    }
+
+    // This promise is started after a user gesture and uses one looping audio element.
+    backgroundMusic.play().catch(() => {
+        // Audio can be unavailable because of browser or device policy.
+    });
+}
+
+function playSoundEffect(source) {
+    if (!soundEnabled) {
+        return;
+    }
+
+    // A separate short effect can respond to quick collections without restarting music.
+    const effect = new Audio(source);
+    effect.volume = source === audioSources.cleanDrop ? 0.48 : 0.4;
+    activeSoundEffects.add(effect);
+    effect.addEventListener('ended', () => activeSoundEffects.delete(effect), { once: true });
+    effect.play().catch(() => {
+        // Missing files, muted devices, and browser policies fail gracefully.
+        activeSoundEffects.delete(effect);
+    });
+}
+
+function beginAudioAfterInteraction(event) {
+    if (event.target.closest('#sound-toggle')) {
+        return;
+    }
+
+    audioStarted = true;
+    startBackgroundMusic();
+    document.removeEventListener('pointerdown', beginAudioAfterInteraction);
+    document.removeEventListener('keydown', beginAudioAfterInteraction);
+}
+
+function toggleSound() {
+    soundEnabled = !soundEnabled;
+    updateSoundToggle();
+    saveSoundPreference();
+
+    if (soundEnabled) {
+        audioStarted = true;
+        startBackgroundMusic();
+    } else {
+        backgroundMusic.pause();
+        backgroundMusic.currentTime = 0;
+        activeSoundEffects.forEach((effect) => {
+            effect.pause();
+            effect.currentTime = 0;
+        });
+        activeSoundEffects.clear();
+    }
+}
 
 function updateDisplay() {
     scoreText.textContent = score;
@@ -194,10 +296,12 @@ function catchDrop(drop, isPolluted) {
 
     removeDrop(drop);
     if (isPolluted) {
+        playSoundEffect(audioSources.pollutedDrop);
         // The score helper clamps the result, so pollution cannot make it negative.
         updateScore(pollutedDropPenalty);
         showFeedback('Polluted Water! -2');
     } else {
+        playSoundEffect(audioSources.cleanDrop);
         // The active drop is removed before scoring, so a second tap cannot score.
         communityScore += 1;
         updateScore(1);
@@ -338,8 +442,13 @@ replayButton.addEventListener('click', restartGame);
 resetButton.addEventListener('click', restartGame);
 shareButton.addEventListener('click', shareScore);
 difficultyInputs.forEach((input) => input.addEventListener('change', chooseDifficulty));
+soundToggle.addEventListener('click', toggleSound);
+document.addEventListener('pointerdown', beginAudioAfterInteraction);
+document.addEventListener('keydown', beginAudioAfterInteraction);
 
 // The start screen is the first view until the player starts a round.
+loadSoundPreference();
+updateSoundToggle();
 updateDifficultyDescription();
 showScreen(startScreen);
 updateDisplay();

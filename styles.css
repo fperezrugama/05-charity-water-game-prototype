@@ -64,6 +64,12 @@ footer {
     padding: 1.25rem 0;
 }
 
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
 .site-header a {
     display: inline-block;
 }
@@ -399,6 +405,13 @@ footer a:focus-visible {
     background: var(--light-blue);
 }
 
+.sound-toggle {
+    min-width: 7rem;
+    min-height: 2.5rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+}
+
 .result-panel {
     max-width: 680px;
     margin: 1.5rem auto;
@@ -484,6 +497,11 @@ footer {
     .site-header {
         align-items: flex-start;
         flex-direction: column;
+    }
+
+    .header-actions {
+        width: 100%;
+        justify-content: space-between;
     }
 
     .mission {
